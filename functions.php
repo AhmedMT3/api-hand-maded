@@ -19,7 +19,7 @@ function isValidHexColor($color) {
 }
 // Print Json Error
 function errorResponse($msg = []){
-    $response = ["status" => 'failed', "data" => $msg];
+    $response = ["status" => 'failed', "message" => $msg];
     return json_encode($response);
 }
 // ===================[ Checks If Row Exist ]===================
@@ -51,8 +51,9 @@ function checkRowExist(string $table, array $columns, array $values): bool|strin
 function getAllData(string $table, string $orderBy = null, bool $desc = false):int{
     global $con;
     $status = "failed";
-    $data = [];
-    $response = ["status" => $status, "data" => $data];
+    $msg = '';
+    $response = [];
+
     // Query
     $sql = "SELECT * FROM `$table`";
     if($orderBy !== null){
@@ -69,8 +70,8 @@ function getAllData(string $table, string $orderBy = null, bool $desc = false):i
         $count  = $stmt->rowCount();
 
         $status = "success";
-        $response['status'] = $status;
-        $response['data'] = $data;
+        $msg = $data;
+        $response = ['status' => $status, 'message' => $msg];
         echo json_encode($response);
         return $count;
 
@@ -85,9 +86,11 @@ function getAllData(string $table, string $orderBy = null, bool $desc = false):i
 function insertData(string $table, $data){
     global $con;
     $status = "failed";
-    $data = [];
-    $response = ["status" => $status, "data" => $data];
+    $msg = '';
+    $response = [];
+
     // Data Placeholders & Fields
+    $ins =[];
     foreach ($data as $field => $v)
         $ins[] = ':' . $field; 
     $ins = implode(',', $ins);
@@ -106,18 +109,20 @@ function insertData(string $table, $data){
         
         if ($count > 0) {
             $status = "success";
-            $response['status'] = $status;
-            $response['data'] = $data;
+            $msg = "User added successfuly";
+            $response = ["status" => $status, "message" => $msg];
             echo json_encode($response);
             
         } else {
-            $response['data'] = "Error happend";
+            $msg = "Error happend";
+            $response = ["status" => $status, "message" => $msg];
             echo json_encode($response);
         }
         return $count;
 
     }catch(PDOException $e){
-        $response['data'] = $e->getMessage();
+        $msg = $e->getMessage();
+        $response = ["status" => $status, "message" => $msg];
         echo json_encode($response);
     }
     

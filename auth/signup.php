@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 include "../connect.php";
 include "../functions.php";
@@ -16,12 +19,12 @@ $userExist = checkRowExist('users', $columns, $values);
 $data = [
     'user_name'  => $username,
     'user_email' => $email,
-    'user_password' => $password,
+    'user_password' => sha1($password),
     'user_verify_code' => $verifyCode
 ];
 
-if ($username && $email && $password && $verifyCode) {
-    if ($userExist) {
+if ($username && $email && $password ) {
+    if (!$userExist) {
         insertData('users', $data);
 
     } else{
