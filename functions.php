@@ -17,12 +17,31 @@ function toMySQLDateTime($dateTimeString) {
 function isValidHexColor($color) {
     return preg_match('/^#[0-9A-Fa-f]{6}$/', $color) === 1;
 }
+
 // Print Json Error
 function errorResponse($msg = []){
-    $response = ["status" => 'failed', "message" => $msg];
+    $response = ["status" => 'Error', "message" => $msg];
     return json_encode($response);
 }
+
+// =======================================================
+// ===================[ Delete File ]=====================
+// =======================================================
+function deleteFile($dir, $fileName){
+    $path = $dir . '/' . $fileName;
+    if(file_exists($path)){
+        if(unlink($path)){
+            return "success";
+        }else{
+            return "Unable to delete the file";
+        }
+    }else{
+        return "File does not exist";
+    }
+}
+// =============================================================
 // ===================[ Checks If Row Exist ]===================
+// =============================================================
 function checkRowExist(string $table, array $columns, array $values): bool|string{
     global $con;
     // Query
@@ -44,13 +63,13 @@ function checkRowExist(string $table, array $columns, array $values): bool|strin
 
 
 }
-
-
+// ===============================================================
 // =======================[ Get All Data ]========================
+// ===============================================================
 
 function getAllData(string $table, string $orderBy = null, bool $desc = false):int{
     global $con;
-    $status = "failed";
+    $status = "Error";
     $msg = '';
     $response = [];
 
@@ -80,13 +99,14 @@ function getAllData(string $table, string $orderBy = null, bool $desc = false):i
         echo json_encode($response);
     }
 }
+// ===============================================================
+// =======================[ Insert Data ]=========================
+// ===============================================================
 
-// =======================[ Insert Data ]========================
-
-function insertData(string $table, $data){
+function insertData(string $table, $data, $successMsg){
     global $con;
-    $status = "failed";
-    $msg = '';
+    $status = "Error";
+    $msg = $successMsg;
     $response = [];
 
     // Data Placeholders & Fields
@@ -109,12 +129,11 @@ function insertData(string $table, $data){
         
         if ($count > 0) {
             $status = "success";
-            $msg = "User added successfuly";
             $response = ["status" => $status, "message" => $msg];
             echo json_encode($response);
             
         } else {
-            $msg = "Error happend";
+            $msg = "Failed Insert Data";
             $response = ["status" => $status, "message" => $msg];
             echo json_encode($response);
         }
@@ -127,8 +146,50 @@ function insertData(string $table, $data){
     }
     
 }
+// ===============================================================
+// =======================[ Update Data ]=========================
+// ===============================================================
 
+function updateData(string $table, $data, $where, $successMsg){
+    global $con;
+    $status = "Error";
+    $msg = $successMsg;
+    $response = [];
+
+    $columns = [];
+    $values = [];
+    foreach($data as $key => $val){
+        $columns[] = $key;
+        $values[] = $val;
+    }
+
+    // Query
+    $sql = "UPDATE $table SET " . implode(' = ?, ', $columns) . " = ? WHERE `$where`";
+
+    try{
+        $stmt = $con->prepare($sql);
+        $stmt->execute($values);
+        $count = $stmt->rowCount();
+        if($count > 0){
+            $status = "success";
+            $response = ['status' => $status, 'message' => $msg];
+            echo json_encode($response);
+
+        }else{
+            $msg = "Failed To Update Data";
+            $response = ['status' => $status, 'message' => $msg];
+        }
+        return $count;
+
+    }catch(PDOException $e){
+        $msg = $e->getMessage();
+        $response = ["status" => $status, "message" => $msg];
+        echo json_encode($response);
+    }
+}
+// ===============================================================
 // =======================[ Image Upload ]========================
+// ===============================================================
 
 function imageUpload($imageRequest){
     global $errMsg;
@@ -171,17 +232,20 @@ function imageUpload($imageRequest){
     }
 }
 
-//====================[ Delete File ]=====================
+function checkVerifyCode(string $table, $email, $verifyCode): bool{
+    global $con;
 
-function deleteFile($dir, $fileName){
-    $path = $dir . '/' . $fileName;
-    if(file_exists($path)){
-        if(unlink($path)){
-            return "success";
-        }else{
-            return "Unable to delete the file";
-        }
+    // Query
+    $sql = "SELECT * FROM $table WHERE `user_email` = ? AND `user_verify_code` = ?";
+    $stmt = $con->prepare($sql);
+    $stmt->execute([$email, $verifyCode]);
+    $count = $stmt->rowCount();
+
+    if($count > 0){
+        return true;
     }else{
-        return "File does not exist";
+        return false;
     }
+    
+
 }

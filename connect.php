@@ -1,8 +1,8 @@
 <?php
-//================ HOST ============ DB NAME ======
-$dsn = "mysql:host=localhost;dbname=hand_maded";
-$user = "root";
-$pass = "";
+//================ HOST ================ DB NAME ======
+$dsn = "mysql:host=localhost;dbname=hand_maded";//fdb1029.awardspace.net//4502225_handmaded
+$user = "root";//4502225_handmaded
+$pass = "";//YGwmMDF@SMnJ@A8
 $option = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4");
 
 try {
