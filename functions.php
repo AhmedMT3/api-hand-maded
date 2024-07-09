@@ -150,7 +150,7 @@ function insertData(string $table, $data, $successMsg){
 // =======================[ Update Data ]=========================
 // ===============================================================
 
-function updateData(string $table, $data, $where, $successMsg){
+function updateData(string $table, $data, $whereCol, $whereVal, $successMsg = ''){
     global $con;
     $status = "Error";
     $msg = $successMsg;
@@ -162,9 +162,10 @@ function updateData(string $table, $data, $where, $successMsg){
         $columns[] = $key;
         $values[] = $val;
     }
+    $values[] = $whereVal;
 
     // Query
-    $sql = "UPDATE $table SET " . implode(' = ?, ', $columns) . " = ? WHERE `$where`";
+    $sql = "UPDATE $table SET " . implode(' = ?, ', $columns) . " = ? WHERE `$whereCol` = ?";
 
     try{
         $stmt = $con->prepare($sql);
@@ -178,6 +179,7 @@ function updateData(string $table, $data, $where, $successMsg){
         }else{
             $msg = "Failed To Update Data";
             $response = ['status' => $status, 'message' => $msg];
+            echo json_encode($response);
         }
         return $count;
 

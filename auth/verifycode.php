@@ -2,18 +2,22 @@
 include "../connect.php";
 include "../functions.php";
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $email = isset($_POST['email']) ? $_POST['email'] : null;
 $verifyCode = isset($_POST['verifycode']) ? $_POST['verifycode'] : null;
 
-// Checking code
-
+// Checking verify code
 $validCode = checkVerifyCode('users', $email, $verifyCode);
 
 if($email && $verifyCode){
     if($validCode){
     $data = ['user_approve' => '1'];
-    $where = "user_email = $email";
-    updateData('users', $data, $where, "User Approved");
+    $whereCol = "user_email";
+    $whereVal = $email;
+    updateData('users', $data, $whereCol, $whereVal, "User Verified Successfully");
 
     }else{
         echo errorResponse("Incorrect Verify Code");
