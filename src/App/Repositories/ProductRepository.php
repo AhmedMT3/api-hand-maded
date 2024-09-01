@@ -7,7 +7,7 @@ namespace App\Repositories;
 use App\Database;
 use PDO;
 
-class ProductRepositery
+class ProductRepository
 {
     public function __construct(private Database $database) {}
 
@@ -15,7 +15,19 @@ class ProductRepositery
     {
         $pdo = $this->database->getConnection();
         $stmt = $pdo->query("SELECT * FROM product");
-        
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getById(int $id): array|bool
+    {
+        $sql = "SELECT * FROM product WHERE id = :id";
+
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
