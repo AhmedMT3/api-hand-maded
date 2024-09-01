@@ -12,10 +12,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 class AddJsonResponseHeader implements MiddlewareInterface
 {
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface{
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $response = $handler->handle($request);
 
         return $response->withHeader('Content-Type', 'application/json');
     }
-
 }
