@@ -7,6 +7,7 @@ namespace App;
 use App\Controllers\Product;
 use App\Middleware\AddJsonResponseHeader;
 use App\Middleware\GetProduct;
+use App\Middleware\RequireAPIKey;
 use Slim\Factory\AppFactory;
 use DI\ContainerBuilder;
 use Slim\Handlers\Strategies\RequestResponseArgs;
@@ -48,7 +49,7 @@ $app->group('/api', function (RouteCollectorProxy $group) {
         $group->patch('/products/{id:[0-9]+}', [Product::class, 'update']);
         $group->delete('/products/{id:[0-9]+}', [Product::class, 'delete']);
     })->add(GetProduct::class);
-});
+})->add(RequireAPIKey::class);
 
 
 $app->run();
