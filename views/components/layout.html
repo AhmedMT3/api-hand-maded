@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/pico.cyan.min.css" />
+    <title>{%block title %}{%endblock%} | Hand Maded</title>
+</head>
+
+<body>
+    <!-- Navbar here -->
+    {% include "components/nav.html" %}
+    
+    <header>
+        {% block header %}
+        <!-- header will display here -->
+        {% endblock %}
+    </header>
+    <main class="container">
+        {% block main %}
+        <!-- Main-Content will display here -->
+        {% endblock %}
+    </main>
+    <footer>
+        {% block footer %}
+        <!-- footer will display here -->
+        {% endblock %}
+    </footer>
+
+</body>
+
+</html>
