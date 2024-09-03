@@ -4,30 +4,67 @@
 
 
 {% block header %}
-<!-- add header here -->
+
+<h1 style="display: inline;">Create account</h1> <small>To get API key</small>
+
 {% endblock %}
 
 {% block main %}
 
-<h1 style="display: inline;">Create account</h1> <small >To get API key</small>
-
 <div style="width: 50%; ">
-    <form action="" method="post">
+    <form action="/signup" method="post">
 
         <label for="name">Name</label>
-        <input type="text" name="name" id="name">
-    
+        <input type="text" name="name" id="name" value="{{ data.name|default('') }}" {% if errors.name is defined %}
+            aria-invalid="true{% else %}false{% endif %}">
+        <small>
+            {% if errors is defined and errors.name is not null %}
+            Name
+            {% for val in errors.name %}
+            {{val}}
+            {% endfor %}
+            {% endif %}
+        </small>
+
         <label for="email">Email</label>
-        <input type="text" name="email" id="email">
-    
+        <input type="text" name="email" id="email" value="{{ data.email|default('') }}" {% if errors.email is defined %}
+            aria-invalid="true{% else %}false{% endif %}">
+        <small>
+            {% if errors is defined and errors.email is not null %}
+            Email
+            {% for val in errors.email %}
+            {{val}}
+            {% endfor %}
+            {% endif %}
+        </small>
+
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
-    
+        <input type="password" name="password" id="password" value="{{ data.password|default('') }}" {% if
+            errors.password is defined %} aria-invalid="true{% else %}false{% endif %}">
+        <small>
+            {% if errors is defined and errors.password is not null %}
+            Password
+            {% for val in errors.password %}
+            {{val}}
+            {% endfor %}
+            {% endif %}
+        </small>
+
         <label for="password_confirmation">Retype Password</label>
-        <input type="password" name="password_confirmation" id="password_confirmation">
-    
+        <input type="password" name="password_confirmation" id="password_confirmation"
+            value="{{ data.password_confirmation|default('') }}" {% if errors.password_confirmation is defined %}
+            aria-invalid="true{% else %}false{% endif %}">
+        <small>
+            {% if errors is defined and errors.password_confirmation is not null %}
+            Password confirmation
+            {% for val in errors.password_confirmation %}
+            {{val}}
+            {% endfor %}
+            {% endif %}
+        </small>
+
         <button type="submit">Signup</button>
-    
+
     </form>
 </div>
 

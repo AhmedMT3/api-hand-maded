@@ -14,7 +14,10 @@ class Home
 
     public function __invoke(Request $request, Response $response)
     {
-        $response = $this->twig->render($response, 'home.html');
+
+        $response = $this->twig->render($response, 'home.html', [
+            'session' => $_SESSION
+        ]);
 
         return $response;
     }

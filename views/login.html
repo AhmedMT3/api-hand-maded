@@ -1,0 +1,38 @@
+{% extends "components/layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+
+{% block header %}
+
+<h1 style="display: inline;">Login</h1> <small>Welcom back!</small>
+
+{% endblock %}
+
+{% block main %}
+
+<div style="width: 50%; ">
+    <form action="" method="post">
+
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email"
+        value="{{ data.email|default('') }}"
+        {% if error is defined %} aria-invalid="true{% else %}false{% endif %}">
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password"
+        value="{{ data.password|default('') }}"
+        {% if error is defined %} aria-invalid="true{% else %}false{% endif %}">
+        <small>
+            {% if error is defined and error is not null %}
+            {{ error }}
+            {% endif %}
+        </small>
+
+        <button type="submit">Login</button>
+
+    </form>
+</div>
+
+
+{% endblock main %}

@@ -2,11 +2,12 @@
 
 {% block header %}
 <!-- Add header her -->
+<h1>Welcom {{ session.user_name ?? ''}}</h1>
+
 {% endblock %}
 
 {% block main %}
 
-<h2>Home Page</h1>
-<a href="/signup">Signup for an API key</a>
+<a href="/signup"><button>Signup to get API key</button></a>
 
 {% endblock %}
