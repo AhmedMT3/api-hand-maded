@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Repositories\UserRepository;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
@@ -24,9 +26,13 @@ class Signup
             'password' => ['required', ['lengthMin', 6]],
             'password_confirmation' => ['required', ['equals', 'password']]
         ]);
+        // Custum validation rule for email if exist
+        $this->validator->rule(function ($field, $value, $params, $fields) {
+            return $this->repository->find('email', $value) === false;
+        }, 'email')->message('{field} is already taken');
     }
 
-    public function new(Request $request, Response $response) : Response
+    public function new(Request $request, Response $response): Response
     {
         $response = $this->twig->render($response, 'signup.html');
 
@@ -50,14 +56,20 @@ class Signup
 
         $api_key = bin2hex(random_bytes(16));
 
-        $data['api_key'] ='';
+        $encryption_key = Key::loadFromAsciiSafeString($_ENV['ENCRYPTION_KEY']);
+
+        $data['api_key'] = Crypto::encrypt($api_key, $encryption_key);
 
         $data['api_key_hash'] = hash_hmac('sha256', $api_key, $_ENV['HASH_SECRET_KEY']);
 
         $this->repository->create($data);
 
-        $response->getBody()->write("Your API key is: $api_key");
+        return $response->withHeader('Location', '/signup-success')
+            ->withStatus(302);
+    }
 
-        return $response;
+    public function success(Request $request, Response $response): Response
+    {
+        return $this->twig->render($response, 'signup-success.html');
     }
 }

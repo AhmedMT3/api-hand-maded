@@ -5,11 +5,13 @@ declare(strict_types=1);
 use App\Controllers\Home;
 use App\Controllers\Login;
 use App\Controllers\Product;
+use App\Controllers\Profile;
 use App\Controllers\Signup;
 use App\Middleware\ActivateSession;
 use App\Middleware\GetProduct;
 use App\Middleware\RequireAPIKey;
 use App\Middleware\AddJsonResponseHeader;
+use App\Middleware\RequireLogin;
 use Slim\Routing\RouteCollectorProxy;
 
 $app->group('', function (RouteCollectorProxy $group) {
@@ -19,11 +21,15 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     $group->post('/signup', [Signup::class, 'create']);
 
+    $group->get('/signup-success', [Signup::class, 'success']);
+
     $group->get('/login', [Login::class, 'new']);
 
     $group->post('/login', [Login::class, 'create']);
 
     $group->get('/logout', [Login::class, 'destroy']);
+
+    $group->get('/profile', [Profile::class, 'show'])->add(RequireLogin::class);
 })->add(ActivateSession::class);
 
 

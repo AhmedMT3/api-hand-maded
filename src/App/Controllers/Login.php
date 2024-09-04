@@ -18,7 +18,11 @@ class Login
 
     public function new(Request $request, Response $response): Response
     {
-        $response = $this->twig->render($response, 'login.html');
+        $signup_success = $request->getAttribute('signup_success');
+
+        $response = $this->twig->render($response, 'login.html', [
+            'signup_success' => isset($signup_success)
+        ]);
 
         return $response;
     }
@@ -30,8 +34,10 @@ class Login
         $user = $this->repository->find('email', $data['email']);
 
         if ($user && password_verify($data['password'], $user['password_hash'])) {
-
-            $_SESSION['user_name'] = $user['name'];
+            // Delete unwanted values
+            unset($user['password_hash']);
+            unset($user['api_key_hash']);
+            $_SESSION['user'] = $user; //user now contains id, name, email & api_key.
 
             return $response->withHeader('Location', '/')
                 ->withStatus(302);

@@ -1,0 +1,20 @@
+{% extends 'components/layout.html' %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block header %}
+<!-------------------- Header here ------------------>
+
+<h2>Hello {{ session.user.name ?? '' }}</h2>
+<p>
+    Your API Key is: <code>{{ api_key }}</code>
+</p>
+
+{% endblock %}
+
+{% block content %}
+<!-------------------- Content here ------------------>
+
+{% endblock %}

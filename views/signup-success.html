@@ -1,22 +1,17 @@
 {% extends "components/layout.html" %}
 
 {% block title %}
-Home
+Success
 {% endblock %}
 
 {% block header %}
 <!-- Add header her -->
-<h1>Welcom {{ session.user.name ?? ''}}</h1>
+<h1>✨ Account created successfuly ✨</h1>
 
 {% endblock %}
 
 {% block main %}
 
-
-
-<h3><a href="/login">Login</a></h3>
-Or
-<br>
-<a href="/signup"><button>Signup to get API key</button></a>
+<h3>Thank you for joining us, you can now <a href="/login">Login</a></h3>
 
 {% endblock %}
