@@ -7,6 +7,9 @@ Home
 {% block header %}
 <!-- Add header her -->
 <h1>Welcom {{ session.user.name ?? ''}}</h1>
+<p>
+    Get <code>API Key</code> by creating account
+</p>
 
 {% endblock %}
 
@@ -14,9 +17,9 @@ Home
 
 
 
-<h3><a href="/login">Login</a></h3>
+<a href="/signup"><button>Create account</button></a>
 Or
+<a href="/login"><button class="secondary">Login</button></a>
 <br>
-<a href="/signup"><button>Signup to get API key</button></a>
 
 {% endblock %}

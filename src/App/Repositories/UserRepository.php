@@ -11,7 +11,27 @@ class UserRepository
 {
     public function __construct(private Database $database) {}
 
-    public function create(array $data): void
+    public function getAll(): array
+    {
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->query("SELECT * FROM users");
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function find(string $column, $value): array|bool
+    {
+        $sql = "SELECT * FROM users WHERE $column = :value";
+
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':value', $value);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function create(array $data): string
     {
         $sql = "INSERT INTO users (name, email, password_hash, api_key, api_key_hash)
                 VALUES (:name, :email, :password_hash, :api_key, :api_key_hash)";
@@ -25,17 +45,34 @@ class UserRepository
         $stmt->bindValue(':api_key_hash', $data['api_key_hash']);
 
         $stmt->execute();
+        return $pdo->lastInsertId();
     }
 
-    public function find(string $column, $value): array|bool
+    public function update(int $id, array $data): int
     {
-        $sql = "SELECT * FROM users WHERE $column = :value";
+        $sql = "UPDATE users SET name = :name, email = :email,
+                password_hash = :password_hash WHERE id = :id";
 
         $pdo = $this->database->getConnection();
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':value', $value);
+        $stmt->bindValue(':name', $data['name']);
+        $stmt->bindValue(':email', $data['email']);
+        $stmt->bindValue(':password_hash', $data['password_hash']);
+        $stmt->bindValue('id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->rowCount();
+    }
+
+    public function delete(int $id): int
+    {
+        $sql = "DELETE FROM users WHERE id = :id";
+
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->rowCount();
     }
 }
